@@ -75,3 +75,67 @@ try:
         st.warning("No hay datos registrados aún")
 except:
     st.warning("No hay datos registrados aún")
+ st.markdown("---")
+st.subheader("📂 Importar datos desde Excel")
+st.info("💡 El archivo Excel debe tener columnas: muestra1, muestra2, muestra3, muestra4, muestra5")
+
+with st.expander("📥 Ver formato requerido del Excel"):
+    ejemplo = pd.DataFrame({
+        "muestra1": [300.1, 298.5, 301.2],
+        "muestra2": [299.3, 302.1, 298.8],
+        "muestra3": [301.5, 299.8, 300.4],
+        "muestra4": [298.9, 301.3, 299.1],
+        "muestra5": [300.7, 298.2, 301.8]
+    })
+    st.dataframe(ejemplo, use_container_width=True)
+    
+    buffer_ej = io.BytesIO()
+    ejemplo.to_excel(buffer_ej, index=False, engine="openpyxl")
+    buffer_ej.seek(0)
+    st.download_button(
+        "⬇️ Descargar plantilla Excel",
+        data=buffer_ej,
+        file_name="plantilla_muestras.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+archivo = st.file_uploader("Sube tu archivo Excel", type=["xlsx", "xls"])
+
+if archivo is not None:
+    try:
+        df_excel = pd.read_excel(archivo)
+        st.success(f"✅ Archivo cargado: {len(df_excel)} filas detectadas")
+        st.dataframe(df_excel.head(), use_container_width=True)
+        
+        columnas_req = ["muestra1","muestra2","muestra3","muestra4","muestra5"]
+        if all(col in df_excel.columns for col in columnas_req):
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                prod_imp = st.selectbox("Producto", ["Mango","Banano","Aguacate","Melón","Cilantro","Sábila","Manzanilla"], key="prod_imp")
+            with col2:
+                var_imp = st.selectbox("Variable", ["Peso (g)","Diámetro (cm)","Grados Brix","pH","Firmeza"], key="var_imp")
+            with col3:
+                analista_imp = st.text_input("Analista", "Importado", key="anal_imp")
+            
+            if st.button("💾 Importar a la base de datos", use_container_width=True):
+                conn = sqlite3.connect(DB_PATH)
+                for i, row in df_excel.iterrows():
+                    conn.execute(
+                        "INSERT INTO muestras VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        (prod_imp, "Variable continua", var_imp, "", 
+                         analista_imp, str(datetime.today().date()), i+1,
+                         row["muestra1"], row["muestra2"], 
+                         row["muestra3"], row["muestra4"], row["muestra5"])
+                    )
+                conn.commit()
+                conn.close()
+                st.success(f"✅ {len(df_excel)} subgrupos importados exitosamente")
+                st.balloons()
+        else:
+            st.error(f"❌ El archivo debe tener las columnas: {columnas_req}")
+            st.markdown("Descarga la plantilla de arriba para ver el formato correcto.")
+    
+    except Exception as e:
+        st.error(f"❌ Error al leer el archivo: {e}")
+        st.info("Asegúrate de que el archivo es .xlsx y tiene el formato correcto")   

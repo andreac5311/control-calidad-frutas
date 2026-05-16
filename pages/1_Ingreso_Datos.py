@@ -2,7 +2,7 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 from datetime import datetime
-import os
+import io
 
 st.set_page_config(page_title="Ingreso de Datos", page_icon="📥", layout="wide")
 st.title("📥 Ingreso de Datos")
@@ -41,9 +41,9 @@ with st.form("ingreso"):
     st.markdown("---")
     st.subheader("📊 Ingreso de muestras por subgrupo")
     n_subgrupos = st.number_input("Número de subgrupos", min_value=25, max_value=100, value=25)
-    
+
     st.info("💡 Ingresa 5 mediciones por subgrupo")
-    
+
     datos = []
     for i in range(int(n_subgrupos)):
         cols = st.columns(6)
@@ -52,7 +52,7 @@ with st.form("ingreso"):
         datos.append(fila)
 
     submitted = st.form_submit_button("💾 Guardar datos", use_container_width=True)
-    
+
     if submitted:
         conn = sqlite3.connect(DB_PATH)
         for i, fila in enumerate(datos):
@@ -75,7 +75,8 @@ try:
         st.warning("No hay datos registrados aún")
 except:
     st.warning("No hay datos registrados aún")
- st.markdown("---")
+
+st.markdown("---")
 st.subheader("📂 Importar datos desde Excel")
 st.info("💡 El archivo Excel debe tener columnas: muestra1, muestra2, muestra3, muestra4, muestra5")
 
@@ -88,7 +89,7 @@ with st.expander("📥 Ver formato requerido del Excel"):
         "muestra5": [300.7, 298.2, 301.8]
     })
     st.dataframe(ejemplo, use_container_width=True)
-    
+
     buffer_ej = io.BytesIO()
     ejemplo.to_excel(buffer_ej, index=False, engine="openpyxl")
     buffer_ej.seek(0)
@@ -106,10 +107,10 @@ if archivo is not None:
         df_excel = pd.read_excel(archivo)
         st.success(f"✅ Archivo cargado: {len(df_excel)} filas detectadas")
         st.dataframe(df_excel.head(), use_container_width=True)
-        
+
         columnas_req = ["muestra1","muestra2","muestra3","muestra4","muestra5"]
         if all(col in df_excel.columns for col in columnas_req):
-            
+
             col1, col2, col3 = st.columns(3)
             with col1:
                 prod_imp = st.selectbox("Producto", ["Mango","Banano","Aguacate","Melón","Cilantro","Sábila","Manzanilla"], key="prod_imp")
@@ -117,15 +118,15 @@ if archivo is not None:
                 var_imp = st.selectbox("Variable", ["Peso (g)","Diámetro (cm)","Grados Brix","pH","Firmeza"], key="var_imp")
             with col3:
                 analista_imp = st.text_input("Analista", "Importado", key="anal_imp")
-            
+
             if st.button("💾 Importar a la base de datos", use_container_width=True):
                 conn = sqlite3.connect(DB_PATH)
                 for i, row in df_excel.iterrows():
                     conn.execute(
                         "INSERT INTO muestras VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?)",
-                        (prod_imp, "Variable continua", var_imp, "", 
+                        (prod_imp, "Variable continua", var_imp, "",
                          analista_imp, str(datetime.today().date()), i+1,
-                         row["muestra1"], row["muestra2"], 
+                         row["muestra1"], row["muestra2"],
                          row["muestra3"], row["muestra4"], row["muestra5"])
                     )
                 conn.commit()
@@ -135,7 +136,7 @@ if archivo is not None:
         else:
             st.error(f"❌ El archivo debe tener las columnas: {columnas_req}")
             st.markdown("Descarga la plantilla de arriba para ver el formato correcto.")
-    
+
     except Exception as e:
         st.error(f"❌ Error al leer el archivo: {e}")
-        st.info("Asegúrate de que el archivo es .xlsx y tiene el formato correcto")   
+        st.info("Asegúrate de que el archivo es .xlsx y tiene el formato correcto")

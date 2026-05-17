@@ -212,10 +212,10 @@ with tab3:
     st.plotly_chart(fig3, use_container_width=True)
 
 st.markdown("---")
-st.subheader("📋 Detalle de outliers detectados")
+st.subheader("Detalle de outliers detectados")
 
-        if len(todos_outliers) == 0:
-            st.success("No se detectaron datos atípicos con los métodos seleccionados.")
+if len(todos_outliers) == 0:
+    st.success("No se detectaron datos atípicos con los métodos seleccionados.")
 else:
     for i in sorted(todos_outliers):
         subgrupo = i // 5 + 1
@@ -228,7 +228,7 @@ else:
             metodos.append("IQR")
         if outlier_grubbs == i:
             metodos.append(f"Grubbs (G={G_max:.3f})")
-        
+
         st.error(f"""
         **Outlier detectado** — Valor: `{valor:.4f}`
         Subgrupo: **{subgrupo}** | Muestra: **{muestra}**

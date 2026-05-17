@@ -128,10 +128,10 @@ col1, col2, col3, col4 = st.columns(4)
 col1.metric("Subgrupos analizados", len(X_bar))
 col2.metric("Media global", f"{media:.4f}")
 col3.metric("Sigma estimado", f"{sigma:.4f}")
-    if total_alertas == 0:
-        col4.metric("Alertas detectadas", "0 — Proceso OK")
-    else:
-        col4.metric("Alertas detectadas", total_alertas)
+if total_alertas == 0:
+    col4.metric("Alertas detectadas", "0 — Proceso OK")
+else:
+    col4.metric("Alertas detectadas", total_alertas)
 
 st.markdown("---")
 st.subheader("Gráfico con alertas marcadas")
@@ -204,10 +204,10 @@ REGLAS_DESC = {
 hay_alertas = False
 for regla, indices in alertas.items():
     nombre, descripcion = REGLAS_DESC[regla]
-        if len(indices) > 0:
-            hay_alertas = True
-            subgrupos = [i+1 for i in sorted(indices)]
-            st.error(f"**{nombre}:** {descripcion}\n\nSubgrupos afectados: {subgrupos}")
+    if len(indices) > 0:
+        hay_alertas = True
+        subgrupos = [i+1 for i in sorted(indices)]
+        st.error(f"**{nombre}:** {descripcion}\n\nSubgrupos afectados: {subgrupos}")
 
 if not hay_alertas:
     st.success("No se detectaron violaciones a las reglas de Nelson. El proceso está bajo control estadístico.")

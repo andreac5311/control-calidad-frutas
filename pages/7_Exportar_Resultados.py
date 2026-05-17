@@ -175,13 +175,13 @@ st.markdown("---")
 st.subheader("Exportar datos crudos a CSV")
 
 csv = df_filtrado.to_csv(index=False).encode("utf-8")
-    st.download_button(
-        label="Descargar CSV",
-        data=csv,
-        file_name=f"datos_calidad_{datetime.now().strftime('%Y%m%d')}.csv",
-        mime="text/csv",
-        use_container_width=True
-    )
+st.download_button(
+    label="Descargar CSV",
+    data=csv,
+    file_name=f"datos_calidad_{datetime.now().strftime('%Y%m%d')}.csv",
+    mime="text/csv",
+    use_container_width=True
+)
 
 st.markdown("---")
 st.subheader("Vista previa de datos")

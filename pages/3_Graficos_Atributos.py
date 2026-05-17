@@ -27,9 +27,9 @@ with tab1:
         "np - Número de defectos",
         "c - Defectos por unidad",
         "u - Defectos por unidad variable"
-    ])
+    ], key="tipo_grafico_atributos")
 
-    producto = st.selectbox("Producto", ["Mango","Banano","Aguacate","Melón","Cilantro","Sábila","Manzanilla"])
+    producto = st.selectbox("Producto", ["Mango","Banano","Aguacate","Melón","Cilantro","Sábila","Manzanilla"], key="producto_atributos")
     atributo = st.selectbox("Atributo a controlar", [
         "Presencia de manchas",
         "Daños por plagas",
@@ -37,16 +37,16 @@ with tab1:
         "Frutos podridos",
         "Defectos de color",
         "Presencia de insectos"
-    ])
-    analista = st.text_input("Analista", "")
-    n_subgrupos = st.number_input("Número de subgrupos", min_value=25, max_value=100, value=25)
+    ], key="atributo_atributos")
+    analista = st.text_input("Analista", "", key="analista_atributos")
+    n_subgrupos = st.number_input("Número de subgrupos", min_value=25, max_value=100, value=25, key="n_subgrupos_atributos")
 
     st.markdown("---")
     st.subheader("Ingreso de datos por subgrupo")
 
     if "p" in tipo_grafico or "np" in tipo_grafico:
         col1, col2 = st.columns(2)
-        tamanio_n = col1.number_input("Tamaño de subgrupo (n)", min_value=1, value=50)
+        tamanio_n = col1.number_input("Tamaño de subgrupo (n)", min_value=1, value=50, key="tamanio_n_atributos")
 
         defectos = []
         cols_header = st.columns(3)
@@ -57,11 +57,11 @@ with tab1:
         for i in range(int(n_subgrupos)):
             cols = st.columns(3)
             cols[0].write(f"SG {i+1}")
-            d = cols[1].number_input(f"d{i+1}", min_value=0, max_value=int(tamanio_n), key=f"d{i}", label_visibility="collapsed")
+            d = cols[1].number_input(f"d{i+1}", min_value=0, max_value=int(tamanio_n), key=f"d_atrib_{i}", label_visibility="collapsed")
             defectos.append(d)
             cols[2].write(f"{d/tamanio_n:.4f}")
 
-        if st.button("Generar gráfico", use_container_width=True):
+        if st.button("Generar gráfico", use_container_width=True, key="btn_generar_grafico_atributos"):
             defectos = np.array(defectos)
             proporciones = defectos / tamanio_n
 
@@ -132,10 +132,10 @@ with tab1:
         for i in range(int(n_subgrupos)):
             cols = st.columns(2)
             cols[0].write(f"SG {i+1}")
-            d = cols[1].number_input(f"c{i+1}", min_value=0, key=f"c{i}", label_visibility="collapsed")
+            d = cols[1].number_input(f"c{i+1}", min_value=0, key=f"c_atrib_{i}", label_visibility="collapsed")
             defectos_c.append(d)
 
-        if st.button("Generar gráfico", use_container_width=True):
+        if st.button("Generar gráfico", use_container_width=True, key="btn_generar_grafico_c_atributos"):
             defectos_c = np.array(defectos_c)
 
             if "u" not in tipo_grafico:
@@ -204,17 +204,17 @@ with tab2:
     st.markdown("---")
     st.subheader("Ingreso de datos para análisis de outliers")
 
-    tipo_datos = st.radio("Tipo de datos", ["Proporción de defectos", "Número de defectos"], horizontal=True)
-    n_subgrupos_out = st.number_input("Número de subgrupos", min_value=25, max_value=100, value=25)
+    tipo_datos = st.radio("Tipo de datos", ["Proporción de defectos", "Número de defectos"], horizontal=True, key="tipo_datos_outliers")
+    n_subgrupos_out = st.number_input("Número de subgrupos", min_value=25, max_value=100, value=25, key="n_subgrupos_outliers")
 
     if tipo_datos == "Proporción de defectos":
-        tamanio_n_out = st.number_input("Tamaño de subgrupo (n)", min_value=1, value=50)
+        tamanio_n_out = st.number_input("Tamaño de subgrupo (n)", min_value=1, value=50, key="tamanio_n_outliers")
 
         datos_out = []
         for i in range(int(n_subgrupos_out)):
             cols = st.columns(2)
             cols[0].write(f"SG {i+1}")
-            d = cols[1].number_input(f"def{i+1}", min_value=0, max_value=int(tamanio_n_out), key=f"out{i}", label_visibility="collapsed")
+            d = cols[1].number_input(f"def{i+1}", min_value=0, max_value=int(tamanio_n_out), key=f"out_prop_{i}", label_visibility="collapsed")
             datos_out.append(d / tamanio_n_out)
 
     else:
@@ -222,10 +222,10 @@ with tab2:
         for i in range(int(n_subgrupos_out)):
             cols = st.columns(2)
             cols[0].write(f"SG {i+1}")
-            d = cols[1].number_input(f"def{i+1}", min_value=0, key=f"out{i}", label_visibility="collapsed")
+            d = cols[1].number_input(f"def{i+1}", min_value=0, key=f"out_num_{i}", label_visibility="collapsed")
             datos_out.append(d)
 
-    if st.button("Analizar outliers", use_container_width=True):
+    if st.button("Analizar outliers", use_container_width=True, key="btn_analizar_outliers"):
         datos_out_array = np.array(datos_out)
 
         # Detección de outliers usando Z-Score
@@ -350,7 +350,7 @@ with tab3:
         with cols[i % 2]:
             frecuencias[defecto] = st.number_input(defecto, min_value=0, value=0, key=f"par_{i}")
 
-    if st.button("Generar Diagrama de Pareto", use_container_width=True):
+    if st.button("Generar Diagrama de Pareto", use_container_width=True, key="btn_generar_pareto"):
         df_pareto = pd.DataFrame(list(frecuencias.items()), columns=["Defecto","Frecuencia"])
         df_pareto = df_pareto[df_pareto["Frecuencia"] > 0].sort_values("Frecuencia", ascending=False)
 

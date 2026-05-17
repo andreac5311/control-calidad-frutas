@@ -40,15 +40,19 @@ with st.form("ingreso"):
 
     st.markdown("---")
     st.subheader("Ingreso de muestras por subgrupo")
-    n_subgrupos = st.number_input("Numero de subgrupos", min_value=25, max_value=100, value=25)
+    col1, col2 = st.columns(2)
+    with col1:
+        n_subgrupos = st.number_input("Numero de subgrupos", min_value=25, max_value=100, value=25)
+    with col2:
+        n_muestras = st.number_input("Muestras por subgrupo", min_value=2, max_value=15, value=5)
 
-    st.info("Ingresa 5 mediciones por subgrupo")
+    st.info(f"Ingresa {n_muestras} mediciones por subgrupo")
 
     datos = []
     for i in range(int(n_subgrupos)):
-        cols = st.columns(6)
+        cols = st.columns(n_muestras + 1)
         cols[0].markdown(f"**SG {i+1}**")
-        fila = [cols[j+1].number_input(f"M{j+1}", key=f"sg{i}m{j}", label_visibility="collapsed") for j in range(5)]
+        fila = [cols[j+1].number_input(f"M{j+1}", key=f"sg{i}m{j}", label_visibility="collapsed") for j in range(n_muestras)]
         datos.append(fila)
 
     submitted = st.form_submit_button("Guardar datos", use_container_width=True)

@@ -128,8 +128,42 @@ if archivo is not None:
             with col3:
                 analista_imp = st.text_input("Analista", "Importado", key="anal_imp")
 
-            if st.button("Importar a la base de datos", use_container_width=True):
+            # Verificar si ya existen datos para este producto y variable
+            conn_check = sqlite3.connect(DB_PATH)
+            df_existente = pd.read_sql("SELECT * FROM muestras WHERE producto=? AND variable=? AND tipo='Variable continua'",
+                                      conn_check, params=(prod_imp, var_imp))
+            conn_check.close()
+
+            if not df_existente.empty:
+                st.warning(f"⚠️ Ya existen {len(df_existente)} registros para el producto '{prod_imp}' y variable '{var_imp}'")
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    accion = st.radio("¿Qué deseas hacer?",
+                                     ["Reemplazar datos existentes", "Agregar nuevos datos"],
+                                     horizontal=True)
+                with col2:
+                    if st.button("Confirmar acción", use_container_width=True):
+                        st.session_state["accion_importar"] = accion
+                        st.session_state["producto_importar"] = prod_imp
+                        st.session_state["variable_importar"] = var_imp
+                        st.session_state["analista_importar"] = analista_imp
+                        st.session_state["df_excel_importar"] = df_excel.to_dict()
+
+            if "accion_importar" in st.session_state and st.session_state["producto_importar"] == prod_imp and st.session_state["variable_importar"] == var_imp:
+                accion = st.session_state["accion_importar"]
+                df_excel_dict = st.session_state["df_excel_importar"]
+                df_excel = pd.DataFrame(df_excel_dict)
+
                 conn = sqlite3.connect(DB_PATH)
+
+                if accion == "Reemplazar datos existentes":
+                    # Eliminar datos existentes primero
+                    conn.execute("DELETE FROM muestras WHERE producto=? AND variable=? AND tipo='Variable continua'",
+                                (prod_imp, var_imp))
+                    st.info(f"Se eliminaron {len(df_existente)} registros existentes")
+
+                # Insertar nuevos datos
                 for i, row in df_excel.iterrows():
                     conn.execute(
                         "INSERT INTO muestras VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -140,7 +174,19 @@ if archivo is not None:
                     )
                 conn.commit()
                 conn.close()
-                st.success(f"{len(df_excel)} subgrupos importados exitosamente")
+
+                if accion == "Reemplazar datos existentes":
+                    st.success(f"✅ {len(df_excel)} subgrupos importados exitosamente (datos anteriores reemplazados)")
+                else:
+                    st.success(f"✅ {len(df_excel)} subgrupos importados exitosamente (datos agregados)")
+
+                # Limpiar estado
+                del st.session_state["accion_importar"]
+                del st.session_state["producto_importar"]
+                del st.session_state["variable_importar"]
+                del st.session_state["analista_importar"]
+                del st.session_state["df_excel_importar"]
+
         else:
             st.error(f"El archivo debe tener las columnas: {columnas_req}")
             st.markdown("Descarga la plantilla de arriba para ver el formato correcto.")

@@ -85,11 +85,11 @@ def color_puntos(valores, ucl, lcl, media):
             colores.append("green")
     return colores
 
-def grafico_control(valores, ucl, lcl, media, titulo, ylabel):
+def grafico_control(valores, ucl, lcl, media, titulo, ylabel, subgrupos=None):
     colores = color_puntos(valores, ucl, lcl, media)
     fuera = sum(1 for c in colores if c == "red")
     fig = go.Figure()
-    fig.add_trace(go.Scatter(y=valores, mode="lines+markers",
+    fig.add_trace(go.Scatter(x=subgrupos, y=valores, mode="lines+markers",
         marker=dict(color=colores, size=10),
         line=dict(color="gray", width=1), name=ylabel))
     fig.add_hline(y=ucl, line=dict(color="red", dash="dash", width=2), annotation_text=f"UCL={ucl:.3f}")
@@ -122,8 +122,9 @@ with tab1:
         col3.metric("UCL (X̄)", f"{UCL_X_R:.4f}")
         col4.metric("LCL (X̄)", f"{LCL_X_R:.4f}")
 
-        fig1, fuera1 = grafico_control(X_bar, UCL_X_R, LCL_X_R, X_bar_bar, f"Gráfico X̄ - {variable} ({producto})", "X̄")
-        fig2, fuera2 = grafico_control(R, UCL_R, LCL_R, R_bar, f"Gráfico R - {variable} ({producto})", "R")
+        subgrupos = range(1, len(X_bar) + 1)
+        fig1, fuera1 = grafico_control(X_bar, UCL_X_R, LCL_X_R, X_bar_bar, f"Gráfico X̄ - {variable} ({producto})", "X̄", subgrupos)
+        fig2, fuera2 = grafico_control(R, UCL_R, LCL_R, R_bar, f"Gráfico R - {variable} ({producto})", "R", subgrupos)
 
         st.plotly_chart(fig1, use_container_width=True)
         if fuera1 > 0:
@@ -161,8 +162,9 @@ with tab1:
         col3.metric("UCL (X̄)", f"{UCL_X_S:.4f}")
         col4.metric("LCL (X̄)", f"{LCL_X_S:.4f}")
 
-        fig1, fuera1 = grafico_control(X_bar, UCL_X_S, LCL_X_S, X_bar_bar, f"Gráfico X̄ - {variable} ({producto})", "X̄")
-        fig2, fuera2 = grafico_control(S, UCL_S, LCL_S, S_bar, f"Gráfico S - {variable} ({producto})", "S")
+        subgrupos = range(1, len(X_bar) + 1)
+        fig1, fuera1 = grafico_control(X_bar, UCL_X_S, LCL_X_S, X_bar_bar, f"Gráfico X̄ - {variable} ({producto})", "X̄", subgrupos)
+        fig2, fuera2 = grafico_control(S, UCL_S, LCL_S, S_bar, f"Gráfico S - {variable} ({producto})", "S", subgrupos)
 
         st.plotly_chart(fig1, use_container_width=True)
         if fuera1 > 0:

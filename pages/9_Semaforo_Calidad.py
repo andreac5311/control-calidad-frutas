@@ -18,37 +18,54 @@ def cargar_datos():
         df = pd.read_sql("SELECT * FROM muestras WHERE tipo='Variable continua'", conn)
         conn.close()
 
-        # Convertir JSON a estructura de datos
-        datos_procesados = []
-        for _, row in df.iterrows():
-            try:
-                muestras_data = json.loads(row['muestras_json'])
-                producto = row['producto']
-                variable = row['variable']
-                subgrupo = row['subgrupo']
+        if df.empty:
+            return df
 
-                # Asegurarse de que tenemos exactamente 5 muestras (rellenar con NaN si es necesario)
-                muestras = muestras_data['muestras']
-                if len(muestras) < 5:
-                    muestras = muestras + [np.nan] * (5 - len(muestras))
-                elif len(muestras) > 5:
-                    muestras = muestras[:5]
+        # Verificar si los datos están en formato JSON o en columnas separadas
+        if 'muestras_json' in df.columns:
+            # Formato JSON (nuevo)
+            datos_procesados = []
+            for _, row in df.iterrows():
+                try:
+                    muestras_data = json.loads(row['muestras_json'])
+                    producto = row['producto']
+                    variable = row['variable']
+                    subgrupo = row['subgrupo']
 
-                datos_procesados.append({
-                    'producto': producto,
-                    'variable': variable,
-                    'subgrupo': subgrupo,
-                    'muestra1': muestras[0],
-                    'muestra2': muestras[1],
-                    'muestra3': muestras[2],
-                    'muestra4': muestras[3],
-                    'muestra5': muestras[4]
-                })
-            except:
-                continue
+                    # Asegurarse de que tenemos exactamente 5 muestras (rellenar con NaN si es necesario)
+                    muestras = muestras_data['muestras']
+                    if len(muestras) < 5:
+                        muestras = muestras + [np.nan] * (5 - len(muestras))
+                    elif len(muestras) > 5:
+                        muestras = muestras[:5]
 
-        return pd.DataFrame(datos_procesados)
-    except:
+                    datos_procesados.append({
+                        'producto': producto,
+                        'variable': variable,
+                        'subgrupo': subgrupo,
+                        'muestra1': muestras[0],
+                        'muestra2': muestras[1],
+                        'muestra3': muestras[2],
+                        'muestra4': muestras[3],
+                        'muestra5': muestras[4]
+                    })
+                except:
+                    continue
+
+            return pd.DataFrame(datos_procesados)
+        else:
+            # Formato de columnas separadas (antiguo)
+            # Verificar que existan las columnas requeridas
+            columnas_requeridas = ['producto', 'variable', 'subgrupo', 'muestra1', 'muestra2', 'muestra3', 'muestra4', 'muestra5']
+            columnas_faltantes = [col for col in columnas_requeridas if col not in df.columns]
+
+            if columnas_faltantes:
+                st.warning(f"Columnas faltantes en la base de datos: {', '.join(columnas_faltantes)}")
+                return pd.DataFrame()
+
+            return df[columnas_requeridas].copy()
+    except Exception as e:
+        st.error(f"Error al cargar datos: {e}")
         return pd.DataFrame()
 
 def evaluar_proceso(mediciones):

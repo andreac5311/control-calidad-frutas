@@ -3,6 +3,8 @@ import sqlite3
 import pandas as pd
 from datetime import datetime
 import io
+import json
+import numpy as np
 
 st.set_page_config(page_title="Ingreso de Datos", page_icon="", layout="wide")
 st.title("Ingreso de Datos")
@@ -17,8 +19,7 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         producto TEXT, tipo TEXT, variable TEXT,
         unidad TEXT, analista TEXT, fecha TEXT,
-        subgrupo INTEGER, muestra1 REAL, muestra2 REAL,
-        muestra3 REAL, muestra4 REAL, muestra5 REAL
+        subgrupo INTEGER, muestras_json TEXT
     )''')
     conn.commit()
     conn.close()
@@ -60,11 +61,16 @@ with st.form("ingreso"):
     if submitted:
         conn = sqlite3.connect(DB_PATH)
         for i, fila in enumerate(datos):
-            conn.execute("INSERT INTO muestras VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?)",
-                (producto, tipo, variable, unidad, analista, str(fecha), i+1, *fila))
+            muestras_data = {
+                "muestras": fila,
+                "n_muestras": n_muestras,
+                "media": float(np.mean(fila)) if fila else 0
+            }
+            conn.execute("INSERT INTO muestras VALUES (NULL,?,?,?,?,?,?,?,?)",
+                (producto, tipo, variable, unidad, analista, str(fecha), i+1, json.dumps(muestras_data)))
         conn.commit()
         conn.close()
-        st.success(f"Datos guardados correctamente: {n_subgrupos} subgrupos")
+        st.success(f"Datos guardados correctamente: {n_subgrupos} subgrupos con {n_muestras} muestras cada uno")
 
 st.markdown("---")
 st.subheader("Datos registrados")

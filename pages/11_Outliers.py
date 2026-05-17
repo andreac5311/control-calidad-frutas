@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from scipy import stats
+import json
 
 st.set_page_config(page_title="Detección de Outliers", page_icon="", layout="wide")
 st.title("Detección Automática de Datos Atípicos")
@@ -17,7 +18,37 @@ def cargar_datos():
         conn = sqlite3.connect(DB_PATH)
         df = pd.read_sql("SELECT * FROM muestras WHERE tipo='Variable continua'", conn)
         conn.close()
-        return df
+
+        # Convertir JSON a estructura de datos
+        datos_procesados = []
+        for _, row in df.iterrows():
+            try:
+                muestras_data = json.loads(row['muestras_json'])
+                producto = row['producto']
+                variable = row['variable']
+                subgrupo = row['subgrupo']
+
+                # Asegurarse de que tenemos exactamente 5 muestras (rellenar con NaN si es necesario)
+                muestras = muestras_data['muestras']
+                if len(muestras) < 5:
+                    muestras = muestras + [np.nan] * (5 - len(muestras))
+                elif len(muestras) > 5:
+                    muestras = muestras[:5]
+
+                datos_procesados.append({
+                    'producto': producto,
+                    'variable': variable,
+                    'subgrupo': subgrupo,
+                    'muestra1': muestras[0],
+                    'muestra2': muestras[1],
+                    'muestra3': muestras[2],
+                    'muestra4': muestras[3],
+                    'muestra5': muestras[4]
+                })
+            except:
+                continue
+
+        return pd.DataFrame(datos_procesados)
     except:
         return pd.DataFrame()
 

@@ -5,8 +5,8 @@ import numpy as np
 import plotly.graph_objects as go
 from scipy import stats
 
-st.set_page_config(page_title="Normalidad y Pareto", page_icon="📋", layout="wide")
-st.title("📋 Pruebas de Normalidad y Diagrama de Pareto")
+st.set_page_config(page_title="Normalidad y Pareto", page_icon="", layout="wide")
+st.title("Pruebas de Normalidad y Diagrama de Pareto")
 st.markdown("---")
 
 DB_PATH = "data/calidad.db"
@@ -22,11 +22,11 @@ def cargar_datos():
 
 df = cargar_datos()
 
-tab1, tab2 = st.tabs(["🔔 Pruebas de Normalidad", "📊 Diagrama de Pareto"])
+tab1, tab2 = st.tabs(["Pruebas de Normalidad", "Diagrama de Pareto"])
 
 with tab1:
     if df.empty:
-        st.warning("⚠️ No hay datos. Ve a 📥 Ingreso de Datos primero.")
+        st.warning("No hay datos. Ve a Ingreso de Datos primero.")
     else:
         col1, col2 = st.columns(2)
         with col1:
@@ -38,7 +38,7 @@ with tab1:
         datos = df_f[["muestra1","muestra2","muestra3","muestra4","muestra5"]].values.flatten()
 
         st.markdown("---")
-        st.subheader("📊 Estadísticas descriptivas")
+        st.subheader("Estadísticas descriptivas")
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("Media", f"{np.mean(datos):.4f}")
         col2.metric("Desv. estándar", f"{np.std(datos, ddof=1):.4f}")
@@ -52,7 +52,7 @@ with tab1:
         col4.metric("N datos", f"{len(datos)}")
 
         st.markdown("---")
-        st.subheader("🔬 Pruebas de normalidad")
+        st.subheader("Pruebas de normalidad")
 
         stat_sw, p_sw = stats.shapiro(datos)
         stat_ks, p_ks = stats.kstest(datos, 'norm', args=(np.mean(datos), np.std(datos)))
@@ -65,30 +65,30 @@ with tab1:
             st.metric("Estadístico W", f"{stat_sw:.4f}")
             st.metric("Valor p", f"{p_sw:.4f}")
             if p_sw > 0.05:
-                st.success("✅ Normal (p > 0.05)")
+                st.success("Normal (p > 0.05)")
             else:
-                st.error("❌ No normal (p ≤ 0.05)")
+                st.error("No normal (p ≤ 0.05)")
 
         with col2:
             st.markdown("**Kolmogorov-Smirnov**")
             st.metric("Estadístico D", f"{stat_ks:.4f}")
             st.metric("Valor p", f"{p_ks:.4f}")
             if p_ks > 0.05:
-                st.success("✅ Normal (p > 0.05)")
+                st.success("Normal (p > 0.05)")
             else:
-                st.error("❌ No normal (p ≤ 0.05)")
+                st.error("No normal (p ≤ 0.05)")
 
         with col3:
             st.markdown("**D'Agostino-Pearson**")
             st.metric("Estadístico", f"{stat_da:.4f}")
             st.metric("Valor p", f"{p_da:.4f}")
             if p_da > 0.05:
-                st.success("✅ Normal (p > 0.05)")
+                st.success("Normal (p > 0.05)")
             else:
-                st.error("❌ No normal (p ≤ 0.05)")
+                st.error("No normal (p ≤ 0.05)")
 
         st.markdown("---")
-        st.subheader("📈 Gráfico Q-Q")
+        st.subheader("Gráfico Q-Q")
         
         (osm, osr), (slope, intercept, r) = stats.probplot(datos)
         linea_y = slope * np.array(osm) + intercept
@@ -103,7 +103,7 @@ with tab1:
             height=400, template="plotly_white")
         st.plotly_chart(fig, use_container_width=True)
 
-        st.subheader("📈 Histograma con curva normal")
+        st.subheader("Histograma con curva normal")
         x_range = np.linspace(min(datos)-2*np.std(datos), max(datos)+2*np.std(datos), 200)
         curva = stats.norm.pdf(x_range, np.mean(datos), np.std(datos))
         fig2 = go.Figure()
@@ -117,8 +117,8 @@ with tab1:
         st.plotly_chart(fig2, use_container_width=True)
 
 with tab2:
-    st.subheader("📊 Diagrama de Pareto")
-    st.info("💡 Ingresa los defectos encontrados por categoría")
+    st.subheader("Diagrama de Pareto")
+    st.info("Ingresa los defectos encontrados por categoría")
 
     producto_p = st.selectbox("Producto", ["Mango","Banano","Aguacate","Melón","Cilantro","Sábila","Manzanilla"], key="prod_pareto")
     
@@ -131,7 +131,7 @@ with tab2:
         with cols[i % 2]:
             frecuencias[defecto] = st.number_input(defecto, min_value=0, value=0, key=f"par_{i}")
 
-    if st.button("📊 Generar Pareto", use_container_width=True):
+    if st.button("Generar Pareto", use_container_width=True):
         df_pareto = pd.DataFrame(list(frecuencias.items()), columns=["Defecto","Frecuencia"])
         df_pareto = df_pareto[df_pareto["Frecuencia"] > 0].sort_values("Frecuencia", ascending=False)
         
@@ -160,5 +160,5 @@ with tab2:
             st.plotly_chart(fig, use_container_width=True)
 
             vital_80 = df_pareto[df_pareto["Porcentaje acumulado"] <= 80]["Defecto"].tolist()
-            st.success(f"✅ El 80% de defectos se concentra en: **{', '.join(vital_80) if vital_80 else df_pareto.iloc[0]['Defecto']}**")
+            st.success(f"El 80% de defectos se concentra en: **{', '.join(vital_80) if vital_80 else df_pareto.iloc[0]['Defecto']}**")
             st.dataframe(df_pareto, use_container_width=True)

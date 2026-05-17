@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-st.set_page_config(page_title="Reglas de Nelson", page_icon="🔍", layout="wide")
-st.title("🔍 Detección Automática — Reglas de Nelson")
+st.set_page_config(page_title="Reglas de Nelson", page_icon="", layout="wide")
+st.title("Detección Automática — Reglas de Nelson")
 st.markdown("---")
-st.info("💡 Las reglas de Nelson detectan patrones anormales en el proceso, incluso cuando los puntos están dentro de los límites de control.")
+st.info("Las reglas de Nelson detectan patrones anormales en el proceso, incluso cuando los puntos están dentro de los límites de control.")
 
 DB_PATH = "data/calidad.db"
 
@@ -68,7 +68,7 @@ def detectar_nelson(X_bar, media, sigma):
 df = cargar_datos()
 
 if df.empty:
-    st.warning("⚠️ No hay datos. Ve a 📥 Ingreso de Datos o 🎲 Simulador primero.")
+    st.warning("No hay datos. Ve a Ingreso de Datos o Simulador primero.")
     st.stop()
 
 col1, col2 = st.columns(2)
@@ -97,13 +97,13 @@ col1, col2, col3, col4 = st.columns(4)
 col1.metric("Subgrupos analizados", len(X_bar))
 col2.metric("Media global", f"{media:.4f}")
 col3.metric("Sigma estimado", f"{sigma:.4f}")
-if total_alertas == 0:
-    col4.metric("🟢 Alertas detectadas", "0 — Proceso OK")
-else:
-    col4.metric("🔴 Alertas detectadas", total_alertas)
+    if total_alertas == 0:
+        col4.metric("Alertas detectadas", "0 — Proceso OK")
+    else:
+        col4.metric("Alertas detectadas", total_alertas)
 
 st.markdown("---")
-st.subheader("📊 Gráfico con alertas marcadas")
+st.subheader("Gráfico con alertas marcadas")
 
 colores = ["green"] * len(X_bar)
 for regla, indices in alertas.items():
@@ -159,7 +159,7 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("---")
-st.subheader("📋 Detalle de alertas detectadas")
+st.subheader("Detalle de alertas detectadas")
 
 REGLAS_DESC = {
     1: ("Regla 1", "1 punto más allá de 3σ (fuera de límites de control)"),
@@ -173,16 +173,16 @@ REGLAS_DESC = {
 hay_alertas = False
 for regla, indices in alertas.items():
     nombre, descripcion = REGLAS_DESC[regla]
-    if len(indices) > 0:
-        hay_alertas = True
-        subgrupos = [i+1 for i in sorted(indices)]
-        st.error(f"🚨 **{nombre}:** {descripcion}\n\nSubgrupos afectados: {subgrupos}")
+        if len(indices) > 0:
+            hay_alertas = True
+            subgrupos = [i+1 for i in sorted(indices)]
+            st.error(f"**{nombre}:** {descripcion}\n\nSubgrupos afectados: {subgrupos}")
 
 if not hay_alertas:
-    st.success("✅ No se detectaron violaciones a las reglas de Nelson. El proceso está bajo control estadístico.")
+    st.success("No se detectaron violaciones a las reglas de Nelson. El proceso está bajo control estadístico.")
 
 st.markdown("---")
-st.subheader("📚 Referencia de las Reglas de Nelson")
+st.subheader("Referencia de las Reglas de Nelson")
 for regla, (nombre, descripcion) in REGLAS_DESC.items():
     with st.expander(f"{nombre} — {descripcion}"):
         if regla == 1:

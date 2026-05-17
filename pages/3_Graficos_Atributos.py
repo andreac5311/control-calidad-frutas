@@ -4,11 +4,11 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-st.set_page_config(page_title="Gráficos de Atributos", page_icon="🔵", layout="wide")
-st.title("🔵 Gráficos de Control por Atributos")
+st.set_page_config(page_title="Gráficos de Atributos", page_icon="", layout="wide")
+st.title("Gráficos de Control por Atributos")
 st.markdown("---")
 
-st.info("💡 Ingresa los datos de atributos directamente aquí")
+st.info("Ingresa los datos de atributos directamente aquí")
 
 tipo_grafico = st.selectbox("Tipo de gráfico", ["p - Proporción de defectos", "np - Número de defectos", "c - Defectos por unidad", "u - Defectos por unidad variable"])
 
@@ -18,7 +18,7 @@ analista = st.text_input("Analista", "")
 n_subgrupos = st.number_input("Número de subgrupos", min_value=25, max_value=100, value=25)
 
 st.markdown("---")
-st.subheader("📊 Ingreso de datos por subgrupo")
+st.subheader("Ingreso de datos por subgrupo")
 
 if "p" in tipo_grafico or "np" in tipo_grafico:
     col1, col2 = st.columns(2)
@@ -37,7 +37,7 @@ if "p" in tipo_grafico or "np" in tipo_grafico:
         defectos.append(d)
         cols[2].write(f"{d/tamanio_n:.4f}")
     
-    if st.button("📊 Generar gráfico", use_container_width=True):
+    if st.button("Generar gráfico", use_container_width=True):
         defectos = np.array(defectos)
         proporciones = defectos / tamanio_n
         
@@ -79,9 +79,9 @@ if "p" in tipo_grafico or "np" in tipo_grafico:
         col3.metric("LCL", f"{LCL:.4f}")
         
         if fuera > 0:
-            st.error(f"🚨 {fuera} puntos FUERA de control")
+            st.error(f"{fuera} puntos FUERA de control")
         else:
-            st.success("✅ Proceso bajo control estadístico")
+            st.success("Proceso bajo control estadístico")
 
 else:
     defectos_c = []
@@ -94,7 +94,7 @@ else:
         d = cols[1].number_input(f"c{i+1}", min_value=0, key=f"c{i}", label_visibility="collapsed")
         defectos_c.append(d)
 
-    if st.button("📊 Generar gráfico", use_container_width=True):
+    if st.button("Generar gráfico", use_container_width=True):
         defectos_c = np.array(defectos_c)
         
         if "u" not in tipo_grafico:
@@ -134,6 +134,6 @@ else:
         col3.metric("LCL", f"{LCL:.4f}")
 
         if fuera > 0:
-            st.error(f"🚨 {fuera} puntos FUERA de control")
+            st.error(f"{fuera} puntos FUERA de control")
         else:
-            st.success("✅ Proceso bajo control estadístico")
+            st.success("Proceso bajo control estadístico")

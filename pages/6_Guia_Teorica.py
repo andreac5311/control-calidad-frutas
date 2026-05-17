@@ -1,19 +1,19 @@
 import streamlit as st
 
-st.set_page_config(page_title="Guía Teórica", page_icon="📚", layout="wide")
-st.title("📚 Guía Teórica — Control Estadístico de Calidad")
+st.set_page_config(page_title="Guía Teórica", page_icon="", layout="wide")
+st.title("Guía Teórica — Control Estadístico de Calidad")
 st.markdown("---")
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📊 Gráficos de Variables",
-    "🔵 Gráficos de Atributos", 
-    "⚙️ Capacidad del Proceso",
-    "🔔 Normalidad",
-    "📋 Pareto"
+    "Gráficos de Variables",
+    "Gráficos de Atributos",
+    "Capacidad del Proceso",
+    "Normalidad",
+    "Pareto"
 ])
 
 with tab1:
-    st.header("📊 Gráficos de Control por Variables")
+    st.header("Gráficos de Control por Variables")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -57,11 +57,11 @@ with tab1:
         st.info("Para n=5: A₃=1.427, B₃=0, B₄=2.089")
 
     st.markdown("---")
-    st.subheader("🔍 ¿Cómo interpretar los gráficos?")
+    st.subheader("¿Cómo interpretar los gráficos?")
     
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.success("✅ PROCESO BAJO CONTROL")
+        st.success("PROCESO BAJO CONTROL")
         st.markdown("""
         - Todos los puntos dentro de UCL y LCL
         - Distribución aleatoria de puntos
@@ -69,7 +69,7 @@ with tab1:
         - **Decisión:** Continuar el proceso normalmente
         """)
     with col2:
-        st.warning("⚠️ SEÑALES DE ALERTA")
+        st.warning("SEÑALES DE ALERTA")
         st.markdown("""
         - 2 de 3 puntos cerca de los límites
         - 8 puntos consecutivos del mismo lado
@@ -77,7 +77,7 @@ with tab1:
         - **Decisión:** Investigar causa especial
         """)
     with col3:
-        st.error("❌ PROCESO FUERA DE CONTROL")
+        st.error("PROCESO FUERA DE CONTROL")
         st.markdown("""
         - Puntos fuera de UCL o LCL
         - Patrones no aleatorios evidentes
@@ -86,7 +86,7 @@ with tab1:
         """)
 
     st.markdown("---")
-    st.subheader("📌 Reglas de Nelson para detectar causas especiales")
+    st.subheader("Reglas de Nelson para detectar causas especiales")
     reglas = {
         "Regla 1": "1 punto más allá de 3σ (fuera de límites)",
         "Regla 2": "9 puntos consecutivos del mismo lado de la línea central",
@@ -99,7 +99,7 @@ with tab1:
         st.markdown(f"**{regla}:** {descripcion}")
 
 with tab2:
-    st.header("🔵 Gráficos de Control por Atributos")
+    st.header("Gráficos de Control por Atributos")
     st.markdown("""
     Se usan cuando la característica de calidad es **cualitativa** 
     (conforme/no conforme, presencia/ausencia de defecto).
@@ -137,7 +137,7 @@ with tab2:
         st.info("Usar cuando: el área de oportunidad varía entre muestras")
 
     st.markdown("---")
-    st.subheader("🔍 ¿Cuándo usar cada gráfico?")
+    st.subheader("¿Cuándo usar cada gráfico?")
     data = {
         "Gráfico": ["p", "np", "c", "u"],
         "Tipo de dato": ["Proporción", "Conteo", "Conteo", "Tasa"],
@@ -152,7 +152,7 @@ with tab2:
     st.dataframe(data, use_container_width=True)
 
 with tab3:
-    st.header("⚙️ Índices de Capacidad del Proceso")
+    st.header("Índices de Capacidad del Proceso")
     st.markdown("""
     Miden qué tan bien el proceso cumple con las especificaciones del cliente.
     Comparan la **variabilidad natural** del proceso con los **límites de especificación**.
@@ -181,23 +181,23 @@ with tab3:
         st.latex(r"P_{pk} = \min\left(\frac{LSE - \bar{X}}{3s}, \frac{\bar{X} - LIE}{3s}\right)")
 
     st.markdown("---")
-    st.subheader("📊 Escala de interpretación")
+    st.subheader("Escala de interpretación")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.error("❌ Índice < 1.00")
+        st.error("Índice < 1.00")
         st.markdown("Proceso **NO capaz**. Produce defectos fuera de especificación.")
     with col2:
-        st.warning("⚠️ 1.00 ≤ Índice < 1.33")
+        st.warning("1.00 ≤ Índice < 1.33")
         st.markdown("Proceso **marginalmente capaz**. Requiere monitoreo continuo.")
     with col3:
-        st.success("✅ 1.33 ≤ Índice < 1.67")
+        st.success("1.33 ≤ Índice < 1.67")
         st.markdown("Proceso **capaz**. Cumple especificaciones con margen.")
     with col4:
-        st.success("🏆 Índice ≥ 1.67")
+        st.success("Índice ≥ 1.67")
         st.markdown("Proceso **altamente capaz**. Excelente control de calidad.")
 
     st.markdown("---")
-    st.subheader("📌 Diferencia clave: Cp vs Cpk")
+    st.subheader("Diferencia clave: Cp vs Cpk")
     st.info("""
     - **Cp = Cpk:** El proceso está perfectamente centrado ✅
     - **Cp > Cpk:** El proceso está descentrado, aunque tenga potencial ⚠️
@@ -205,7 +205,7 @@ with tab3:
     """)
 
 with tab4:
-    st.header("🔔 Pruebas de Normalidad")
+    st.header("Pruebas de Normalidad")
     st.markdown("""
     Antes de aplicar gráficos de control por variables, es importante verificar 
     que los datos siguen una **distribución normal**, ya que los límites de control 
@@ -239,7 +239,7 @@ with tab4:
         """)
 
     st.markdown("---")
-    st.subheader("📈 Gráfico Q-Q (Quantile-Quantile)")
+    st.subheader("Gráfico Q-Q (Quantile-Quantile)")
     st.markdown("""
     Herramienta visual para evaluar normalidad:
     - **Puntos sobre la línea roja:** Los datos son normales ✅
@@ -257,7 +257,7 @@ with tab4:
     """)
 
 with tab5:
-    st.header("📋 Diagrama de Pareto")
+    st.header("Diagrama de Pareto")
     st.markdown("""
     Herramienta gráfica basada en el **Principio de Pareto (80/20)**:
     el 80% de los problemas son causados por el 20% de las causas.
@@ -286,7 +286,7 @@ with tab5:
         """)
 
     st.markdown("---")
-    st.subheader("📌 Aplicación en frutas y hortalizas")
+    st.subheader("Aplicación en frutas y hortalizas")
     st.info("""
     **Ejemplo — Mango:**
     Si el Pareto muestra que "manchas" y "golpes" representan el 80% de los defectos,

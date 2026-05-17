@@ -5,8 +5,8 @@ import numpy as np
 import plotly.graph_objects as go
 from scipy import stats
 
-st.set_page_config(page_title="Gráficos de Variables", page_icon="📊", layout="wide")
-st.title("📊 Gráficos de Control por Variables")
+st.set_page_config(page_title="Gráficos de Variables", page_icon="", layout="wide")
+st.title("Gráficos de Control por Variables")
 st.markdown("---")
 
 DB_PATH = "data/calidad.db"
@@ -23,7 +23,7 @@ def cargar_datos():
 df = cargar_datos()
 
 if df.empty:
-    st.warning("⚠️ No hay datos de variables continuas. Ve a 📥 Ingreso de Datos primero.")
+    st.warning("No hay datos de variables continuas. Ve a Ingreso de Datos primero.")
     st.stop()
 
 col1, col2 = st.columns(2)
@@ -95,15 +95,15 @@ if tipo_grafico == "X̄ - R":
     
     st.plotly_chart(fig1, use_container_width=True)
     if fuera1 > 0:
-        st.error(f"🚨 {fuera1} puntos FUERA de control en gráfico X̄")
+        st.error(f"{fuera1} puntos FUERA de control en gráfico X̄")
     else:
-        st.success("✅ Proceso bajo control estadístico en gráfico X̄")
+        st.success("Proceso bajo control estadístico en gráfico X̄")
     
     st.plotly_chart(fig2, use_container_width=True)
     if fuera2 > 0:
-        st.error(f"🚨 {fuera2} puntos FUERA de control en gráfico R")
+        st.error(f"{fuera2} puntos FUERA de control en gráfico R")
     else:
-        st.success("✅ Proceso bajo control estadístico en gráfico R")
+        st.success("Proceso bajo control estadístico en gráfico R")
 
 else:
     col1, col2, col3, col4 = st.columns(4)
@@ -117,17 +117,17 @@ else:
     
     st.plotly_chart(fig1, use_container_width=True)
     if fuera1 > 0:
-        st.error(f"🚨 {fuera1} puntos FUERA de control en gráfico X̄")
+        st.error(f"{fuera1} puntos FUERA de control en gráfico X̄")
     else:
-        st.success("✅ Proceso bajo control estadístico en gráfico X̄")
+        st.success("Proceso bajo control estadístico en gráfico X̄")
     
     st.plotly_chart(fig2, use_container_width=True)
     if fuera2 > 0:
-        st.error(f"🚨 {fuera2} puntos FUERA de control en gráfico S")
+        st.error(f"{fuera2} puntos FUERA de control en gráfico S")
     else:
-        st.success("✅ Proceso bajo control estadístico en gráfico S")
+        st.success("Proceso bajo control estadístico en gráfico S")
 
 st.markdown("---")
-st.subheader("📋 Tabla de valores")
+st.subheader("Tabla de valores")
 tabla = pd.DataFrame({"Subgrupo": range(1, len(X_bar)+1), "X̄": X_bar, "R": R, "S": S})
 st.dataframe(tabla.style.format({"X̄": "{:.4f}", "R": "{:.4f}", "S": "{:.4f}"}), use_container_width=True)

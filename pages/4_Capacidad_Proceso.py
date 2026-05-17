@@ -5,8 +5,8 @@ import numpy as np
 import plotly.graph_objects as go
 from scipy import stats
 
-st.set_page_config(page_title="Capacidad del Proceso", page_icon="⚙️", layout="wide")
-st.title("⚙️ Índices de Capacidad del Proceso")
+st.set_page_config(page_title="Capacidad del Proceso", page_icon="", layout="wide")
+st.title("Índices de Capacidad del Proceso")
 st.markdown("---")
 
 DB_PATH = "data/calidad.db"
@@ -23,7 +23,7 @@ def cargar_datos():
 df = cargar_datos()
 
 if df.empty:
-    st.warning("⚠️ No hay datos. Ve a 📥 Ingreso de Datos primero.")
+    st.warning("No hay datos. Ve a Ingreso de Datos primero.")
     st.stop()
 
 col1, col2 = st.columns(2)
@@ -37,7 +37,7 @@ mediciones = df_f[["muestra1","muestra2","muestra3","muestra4","muestra5"]].valu
 todos = mediciones.flatten()
 
 st.markdown("---")
-st.subheader("🎯 Especificaciones del proceso")
+st.subheader("Especificaciones del proceso")
 col1, col2, col3 = st.columns(3)
 with col1:
     LSE = st.number_input("Límite Superior de Especificación (LSE)", value=float(np.mean(todos)+3*np.std(todos)))
@@ -46,7 +46,7 @@ with col2:
 with col3:
     objetivo = st.number_input("Valor objetivo", value=float(np.mean(todos)))
 
-if st.button("⚙️ Calcular índices de capacidad", use_container_width=True):
+if st.button("Calcular índices de capacidad", use_container_width=True):
     media = np.mean(todos)
     sigma_total = np.std(todos, ddof=1)
     
@@ -62,7 +62,7 @@ if st.button("⚙️ Calcular índices de capacidad", use_container_width=True):
     Ppk = min((LSE - media)/(3*sigma_total), (media - LIE)/(3*sigma_total))
 
     st.markdown("---")
-    st.subheader("📊 Resultados")
+    st.subheader("Resultados")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -71,13 +71,13 @@ if st.button("⚙️ Calcular índices de capacidad", use_container_width=True):
         elif valor >= 1.0: return "off"
         else: return "inverse"
     
-    col1.metric("Cp", f"{Cp:.4f}", delta="✅ Capaz" if Cp >= 1.33 else "⚠️ Revisar" if Cp >= 1.0 else "❌ No capaz")
-    col2.metric("Cpk", f"{Cpk:.4f}", delta="✅ Capaz" if Cpk >= 1.33 else "⚠️ Revisar" if Cpk >= 1.0 else "❌ No capaz")
-    col3.metric("Pp", f"{Pp:.4f}", delta="✅ Capaz" if Pp >= 1.33 else "⚠️ Revisar" if Pp >= 1.0 else "❌ No capaz")
-    col4.metric("Ppk", f"{Ppk:.4f}", delta="✅ Capaz" if Ppk >= 1.33 else "⚠️ Revisar" if Ppk >= 1.0 else "❌ No capaz")
+    col1.metric("Cp", f"{Cp:.4f}", delta="Capaz" if Cp >= 1.33 else "Revisar" if Cp >= 1.0 else "No capaz")
+    col2.metric("Cpk", f"{Cpk:.4f}", delta="Capaz" if Cpk >= 1.33 else "Revisar" if Cpk >= 1.0 else "No capaz")
+    col3.metric("Pp", f"{Pp:.4f}", delta="Capaz" if Pp >= 1.33 else "Revisar" if Pp >= 1.0 else "No capaz")
+    col4.metric("Ppk", f"{Ppk:.4f}", delta="Capaz" if Ppk >= 1.33 else "Revisar" if Ppk >= 1.0 else "No capaz")
 
     st.markdown("---")
-    st.subheader("📈 Histograma de capacidad")
+    st.subheader("Histograma de capacidad")
     
     x_range = np.linspace(min(todos)-3*sigma_total, max(todos)+3*sigma_total, 200)
     curva = stats.norm.pdf(x_range, media, sigma_total)
@@ -98,7 +98,7 @@ if st.button("⚙️ Calcular índices de capacidad", use_container_width=True):
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("---")
-    st.subheader("📋 Interpretación")
+    st.subheader("Interpretación")
     
     interpretaciones = {
         "Cp": (Cp, "Potencial del proceso (variación natural vs especificaciones)"),
@@ -109,8 +109,8 @@ if st.button("⚙️ Calcular índices de capacidad", use_container_width=True):
     
     for indice, (valor, descripcion) in interpretaciones.items():
         if valor >= 1.33:
-            st.success(f"✅ **{indice} = {valor:.4f}** — {descripcion} → Proceso CAPAZ")
+            st.success(f"**{indice} = {valor:.4f}** — {descripcion} → Proceso CAPAZ")
         elif valor >= 1.0:
-            st.warning(f"⚠️ **{indice} = {valor:.4f}** — {descripcion} → Proceso MARGINALMENTE capaz")
+            st.warning(f"**{indice} = {valor:.4f}** — {descripcion} → Proceso MARGINALMENTE capaz")
         else:
-            st.error(f"❌ **{indice} = {valor:.4f}** — {descripcion} → Proceso NO capaz")
+            st.error(f"**{indice} = {valor:.4f}** — {descripcion} → Proceso NO capaz")

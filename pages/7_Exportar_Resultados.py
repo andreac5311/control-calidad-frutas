@@ -6,8 +6,8 @@ from scipy import stats
 import io
 from datetime import datetime
 
-st.set_page_config(page_title="Exportar Resultados", page_icon="📤", layout="wide")
-st.title("📤 Exportar Resultados")
+st.set_page_config(page_title="Exportar Resultados", page_icon="", layout="wide")
+st.title("Exportar Resultados")
 st.markdown("---")
 
 DB_PATH = "data/calidad.db"
@@ -24,10 +24,10 @@ def cargar_datos():
 df = cargar_datos()
 
 if df.empty:
-    st.warning("⚠️ No hay datos registrados aún. Ve a 📥 Ingreso de Datos primero.")
+    st.warning("No hay datos registrados aún. Ve a Ingreso de Datos primero.")
     st.stop()
 
-st.subheader("📋 Selecciona qué exportar")
+st.subheader("Selecciona qué exportar")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -41,13 +41,13 @@ if producto != "Todos":
 if variable != "Todas":
     df_filtrado = df_filtrado[df_filtrado["variable"] == variable]
 
-st.info(f"📊 {len(df_filtrado)} subgrupos seleccionados")
+st.info(f"{len(df_filtrado)} subgrupos seleccionados")
 
 st.markdown("---")
-st.subheader("📥 Exportar a Excel")
+st.subheader("Exportar a Excel")
 st.markdown("Genera un archivo Excel con múltiples hojas: datos crudos, estadísticas y resultados de control.")
 
-if st.button("📊 Generar archivo Excel", use_container_width=True):
+if st.button("Generar archivo Excel", use_container_width=True):
     buffer = io.BytesIO()
     
     with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
@@ -132,26 +132,26 @@ if st.button("📊 Generar archivo Excel", use_container_width=True):
     nombre = f"reporte_calidad_{producto}_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
     
     st.download_button(
-        label="⬇️ Descargar Excel",
+        label="Descargar Excel",
         data=buffer,
         file_name=nombre,
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         use_container_width=True
     )
-    st.success("✅ Archivo Excel generado con 4 hojas: datos, control, estadísticas y alertas")
+    st.success("Archivo Excel generado con 4 hojas: datos, control, estadísticas y alertas")
 
 st.markdown("---")
-st.subheader("📋 Exportar datos crudos a CSV")
+st.subheader("Exportar datos crudos a CSV")
 
 csv = df_filtrado.to_csv(index=False).encode("utf-8")
-st.download_button(
-    label="⬇️ Descargar CSV",
-    data=csv,
-    file_name=f"datos_calidad_{datetime.now().strftime('%Y%m%d')}.csv",
-    mime="text/csv",
-    use_container_width=True
-)
+    st.download_button(
+        label="Descargar CSV",
+        data=csv,
+        file_name=f"datos_calidad_{datetime.now().strftime('%Y%m%d')}.csv",
+        mime="text/csv",
+        use_container_width=True
+    )
 
 st.markdown("---")
-st.subheader("👁️ Vista previa de datos")
+st.subheader("Vista previa de datos")
 st.dataframe(df_filtrado, use_container_width=True)

@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 
-st.set_page_config(page_title="Semáforo de Calidad", page_icon="🚦", layout="wide")
-st.title("🚦 Semáforo de Calidad del Proceso")
+st.set_page_config(page_title="Semáforo de Calidad", page_icon="", layout="wide")
+st.title("Semáforo de Calidad del Proceso")
 st.markdown("---")
-st.info("💡 Visualización rápida del estado de todos los procesos monitoreados.")
+st.info("Visualización rápida del estado de todos los procesos monitoreados.")
 
 DB_PATH = "data/calidad.db"
 
@@ -66,10 +66,10 @@ def evaluar_proceso(mediciones):
 df = cargar_datos()
 
 if df.empty:
-    st.warning("⚠️ No hay datos. Ve a 📥 Ingreso de Datos o 🎲 Simulador primero.")
+    st.warning("No hay datos. Ve a Ingreso de Datos o Simulador primero.")
     st.stop()
 
-st.subheader("📊 Estado general del sistema")
+st.subheader("Estado general del sistema")
 
 verdes = amarillos = rojos = 0
 resultados = []
@@ -89,9 +89,9 @@ for (producto, variable), grupo in grupos:
 total = len(resultados)
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Total procesos", total)
-col2.metric("🟢 Bajo control", verdes)
-col3.metric("🟡 Atención", amarillos)
-col4.metric("🔴 Fuera de control", rojos)
+col2.metric("Bajo control", verdes)
+col3.metric("Atención", amarillos)
+col4.metric("Fuera de control", rojos)
 
 if total > 0:
     pct_ok = round(verdes/total*100, 1)
@@ -99,7 +99,7 @@ if total > 0:
     st.caption(f"{pct_ok}% de procesos bajo control")
 
 st.markdown("---")
-st.subheader("🚦 Estado por proceso")
+st.subheader("Estado por proceso")
 
 for res in resultados:
     if res["estado"] == "VERDE":
@@ -112,20 +112,20 @@ for res in resultados:
         color = "🔴"
         bg = "background-color: #f8d7da; border-left: 5px solid #dc3545; padding: 15px; border-radius: 8px; margin: 8px 0;"
 
-    st.markdown(f"""
-    <div style="{bg}">
-        <strong>{color} {res['producto']} — {res['variable']}</strong><br>
-        {res['mensaje']} &nbsp;|&nbsp; 
-        Cpk: <strong>{res['Cpk']:.3f}</strong> &nbsp;|&nbsp;
-        Fuera de control: <strong>{res['pct_fuera']:.1f}%</strong> &nbsp;|&nbsp;
-        Media: <strong>{res['media']:.3f}</strong> &nbsp;|&nbsp;
-        Normalidad: <strong>{'✅ Sí' if res['normal'] else '❌ No'}</strong> &nbsp;|&nbsp;
-        Subgrupos: <strong>{res['n_subgrupos']}</strong>
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style="{bg}">
+            <strong>{color} {res['producto']} — {res['variable']}</strong><br>
+            {res['mensaje']} &nbsp;|&nbsp;
+            Cpk: <strong>{res['Cpk']:.3f}</strong> &nbsp;|&nbsp;
+            Fuera de control: <strong>{res['pct_fuera']:.1f}%</strong> &nbsp;|&nbsp;
+            Media: <strong>{res['media']:.3f}</strong> &nbsp;|&nbsp;
+            Normalidad: <strong>{'Sí' if res['normal'] else 'No'}</strong> &nbsp;|&nbsp;
+            Subgrupos: <strong>{res['n_subgrupos']}</strong>
+        </div>
+        """, unsafe_allow_html=True)
 
 st.markdown("---")
-st.subheader("📋 Tabla resumen")
+st.subheader("Tabla resumen")
 if resultados:
     df_res = pd.DataFrame(resultados)[["producto","variable","estado","mensaje","pct_fuera","Cpk","media","normal","n_subgrupos"]]
     df_res.columns = ["Producto","Variable","Estado","Diagnóstico","% Fuera control","Cpk","Media","Normal","Subgrupos"]
@@ -133,11 +133,11 @@ if resultados:
     st.dataframe(df_res, use_container_width=True)
 
 st.markdown("---")
-st.subheader("📌 Guía de interpretación del semáforo")
+st.subheader("Guía de interpretación del semáforo")
 col1, col2, col3 = st.columns(3)
 with col1:
     st.success("""
-    🟢 **VERDE — Bajo control**
+    **VERDE — Bajo control**
     - 0% de puntos fuera de control
     - Cpk ≥ 1.33
     - Proceso estable y capaz
@@ -145,7 +145,7 @@ with col1:
     """)
 with col2:
     st.warning("""
-    🟡 **AMARILLO — Atención**
+    **AMARILLO — Atención**
     - Hasta 10% fuera de control
     - 1.0 ≤ Cpk < 1.33
     - Proceso marginalmente capaz
@@ -153,7 +153,7 @@ with col2:
     """)
 with col3:
     st.error("""
-    🔴 **ROJO — Fuera de control**
+    **ROJO — Fuera de control**
     - Más del 10% fuera de control
     - Cpk < 1.0
     - Proceso no capaz

@@ -5,10 +5,10 @@ import numpy as np
 import plotly.graph_objects as go
 from scipy import stats
 
-st.set_page_config(page_title="Detección de Outliers", page_icon="🎯", layout="wide")
-st.title("🎯 Detección Automática de Datos Atípicos")
+st.set_page_config(page_title="Detección de Outliers", page_icon="", layout="wide")
+st.title("Detección Automática de Datos Atípicos")
 st.markdown("---")
-st.info("💡 Identifica automáticamente datos atípicos usando múltiples métodos estadísticos.")
+st.info("Identifica automáticamente datos atípicos usando múltiples métodos estadísticos.")
 
 DB_PATH = "data/calidad.db"
 
@@ -49,7 +49,7 @@ def detectar_grubbs(datos, alpha=0.05):
 df = cargar_datos()
 
 if df.empty:
-    st.warning("⚠️ No hay datos. Ve a 📥 Ingreso de Datos o 🎲 Simulador primero.")
+    st.warning("No hay datos. Ve a Ingreso de Datos o Simulador primero.")
     st.stop()
 
 col1, col2 = st.columns(2)
@@ -64,7 +64,7 @@ todos = mediciones.flatten()
 indices_todos = np.arange(len(todos))
 
 st.markdown("---")
-st.subheader("⚙️ Configuración de métodos")
+st.subheader("Configuración de métodos")
 col1, col2, col3 = st.columns(3)
 with col1:
     usar_zscore = st.checkbox("Z-Score", value=True)
@@ -101,9 +101,9 @@ col3.metric("Outliers IQR", len(outliers_iqr))
 col4.metric("Outliers totales", len(todos_outliers))
 
 st.markdown("---")
-st.subheader("📊 Visualización de outliers")
+st.subheader("Visualización de outliers")
 
-tab1, tab2, tab3 = st.tabs(["📈 Serie de datos", "📦 Boxplot", "🔔 Histograma"])
+tab1, tab2, tab3 = st.tabs(["Serie de datos", "Boxplot", "Histograma"])
 
 with tab1:
     colores = ["red" if i in todos_outliers else "steelblue" for i in range(len(todos))]
@@ -183,8 +183,8 @@ with tab3:
 st.markdown("---")
 st.subheader("📋 Detalle de outliers detectados")
 
-if len(todos_outliers) == 0:
-    st.success("✅ No se detectaron datos atípicos con los métodos seleccionados.")
+        if len(todos_outliers) == 0:
+            st.success("No se detectaron datos atípicos con los métodos seleccionados.")
 else:
     for i in sorted(todos_outliers):
         subgrupo = i // 5 + 1
@@ -199,15 +199,15 @@ else:
             metodos.append(f"Grubbs (G={G_max:.3f})")
         
         st.error(f"""
-        🚨 **Outlier detectado** — Valor: `{valor:.4f}`
+        **Outlier detectado** — Valor: `{valor:.4f}`
         Subgrupo: **{subgrupo}** | Muestra: **{muestra}**
         Métodos que lo detectaron: **{', '.join(metodos)}**
-        Desviación de la media: **{abs(valor - np.mean(todos)):.4f}** 
+        Desviación de la media: **{abs(valor - np.mean(todos)):.4f}**
         ({abs(valor - np.mean(todos))/np.std(todos,ddof=1):.2f} desviaciones estándar)
         """)
 
 st.markdown("---")
-st.subheader("📚 Comparación de métodos")
+st.subheader("Comparación de métodos")
 
 data_comp = {
     "Método": ["Z-Score", "IQR", "Grubbs"],

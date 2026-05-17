@@ -23,4 +23,4 @@ for i in range(25):
 
 conn.commit()
 conn.close()
-print("✅ Datos de prueba cargados exitosamente")
+print("Datos de prueba cargados exitosamente")
